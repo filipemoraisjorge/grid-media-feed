@@ -5,7 +5,10 @@ import { HttpModule } from '@angular/http';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-
+// Angular Material Components
+import {MatGridListModule} from '@angular/material/grid-list';
+const MAT_MODULES = [ MatGridListModule ];
+// app components
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
 
@@ -18,7 +21,8 @@ import { GridComponent } from './grid/grid.component';
     BrowserModule,
     FormsModule,
     HttpModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ...MAT_MODULES
   ],
   providers: [],
   bootstrap: [AppComponent]
