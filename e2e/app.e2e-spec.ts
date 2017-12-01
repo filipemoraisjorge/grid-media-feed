@@ -1,14 +1,14 @@
-import { GridMediaFeedPage } from './app.po';
+import { AppPage } from './app.po';
 
-describe('grid-media-feed App', function() {
-  let page: GridMediaFeedPage;
+describe('grid-media-feed App', () => {
+  let page: AppPage;
 
   beforeEach(() => {
-    page = new GridMediaFeedPage();
+    page = new AppPage();
   });
 
-  it('should display message saying app works', () => {
+  it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    expect(page.getParagraphText()).toEqual('Welcome to gmf!');
   });
 });

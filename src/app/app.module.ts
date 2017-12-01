@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
 
@@ -14,7 +17,8 @@ import { GridComponent } from './grid/grid.component';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
