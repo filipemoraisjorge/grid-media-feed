@@ -1,9 +1,8 @@
-<mat-grid-list class="mat-typography" cols="4" rowHeight="100px">
-  <mat-grid-tile
-      *ngFor="let tile of tiles"
-      [colspan]="tile.cols"
-      [rowspan]="tile.rows"
-      [style.background]="tile.color">
-    {{tile.text}}
+<button (click)="addCols()">add columns</button>
+<mat-grid-list *ngIf="isLoaded" class="mat-typography" cols="{{MAX_COLS}}">
+  <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows" [style.background]="tile.color">
+
+    <h2>{{tile.content.title}}</h2>
+
   </mat-grid-tile>
 </mat-grid-list>
