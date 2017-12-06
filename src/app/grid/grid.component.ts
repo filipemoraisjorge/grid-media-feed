@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
+interface Item {
+  content: any;
+  text: string;
+  width: number;
+  height: number;
+  color: string;
+}
+
 @Component({
   selector: 'gmf-grid',
   templateUrl: './grid.component.html',
@@ -7,13 +15,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GridComponent implements OnInit {
 
-  private baseTiles = [
-    { content: {}, text: '2x2', cols: 2, rows: 2, color: 'lightblue' },
-    { content: {}, text: '1x1', cols: 1, rows: 1, color: 'lightgreen' },
-    { content: {}, text: '2x1', cols: 2, rows: 1, color: 'lightpink' },
-    { content: {}, text: '1x2', cols: 1, rows: 2, color: '#DDBDF1' },
+  private baseTiles: Item[] = [
+    { content: {}, text: '2x2', width: 2, height: 2, color: 'lightblue' },
+    { content: {}, text: '1x1', width: 1, height: 1, color: 'lightgreen' },
+    { content: {}, text: '2x1', width: 2, height: 1, color: 'lightpink' },
+    { content: {}, text: '1x2', width: 1, height: 2, color: '#DDBDF1' },
   ];
-  private bigTile = { content: { title: 'big', text: 'The big tile' }, cols: 8, rows: 4, color: '#DDEE66' };
   private baseContent = [
     { title: '1', text: 'The first  item' },
     { title: '2', text: 'The second  item' },
@@ -23,44 +30,135 @@ export class GridComponent implements OnInit {
     { title: '6', text: 'The sixth random item' },
 
   ];
-
-  private tiles2 = [{ "text": "big", "cols": 8, "rows": 4, "color": "#DDEE66" }, { "text": "0", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "1", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "2", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "3", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "4", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "5", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "6", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "7", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "8", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "9", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "10", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "11", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "12", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "13", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "14", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "15", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "16", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "17", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "18", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "19", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "20", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "21", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "22", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "23", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "24", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "25", "cols": 2, "rows": 1, "color": "red" }, { "text": "26", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "27", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "28", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "29", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "30", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "31", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "32", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "33", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "34", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "35", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "36", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "37", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "38", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "39", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "40", "cols": 1, "rows": 2, "color": "#DDBDF1" }, { "text": "41", "cols": 2, "rows": 2, "color": "lightblue" }, { "text": "42", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "43", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "44", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "45", "cols": 2, "rows": 1, "color": "lightpink" }, { "text": "46", "cols": 1, "rows": 1, "color": "lightgreen" }, { "text": "47", "cols": 1, "rows": 1, "color": "lightgreen" }];
   public tiles = [];
-  private GRID_QTY_ELEMENTS = 48;
+  public unsortedTiles = [];
+
+  public map: string[];
+
+  private GRID_QTY_ELEMENTS = 32;
   private MAX_SIZE_MULTI = 1;
-  public MAX_COLS = 12; // 2 * this.MAX_SIZE_MULTI;
+  public MAX_COLS = 8;
 
   public isLoaded = false;
   constructor() { }
 
   ngOnInit() {
-    const bigIndex = this.random(0, this.GRID_QTY_ELEMENTS - 1);
+
+    this.map = new Array(100).fill('');
+
+    const unsortedTiles = [];
+
+    // mock/fill the array with random items;
     for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
 
-      const size = this.random(1, this.MAX_SIZE_MULTI);
+      // const size = this.random(1, this.MAX_SIZE_MULTI);
       const index = this.random(0, this.baseTiles.length - 1);
       const contentIndex = this.random(0, this.baseContent.length - 1);
 
       const element = { ...this.baseTiles[index] };
 
-      element.cols = element.cols * size;
-      element.rows = element.rows * size;
-      element.content = this.baseContent[contentIndex];
+      // element.cols = element.cols * size;
+      // element.rows = element.rows * size;
+      element.content = { title: i }; // this.baseContent[contentIndex];
       element.text = `${i + 1}`; // - ${element.cols}x${element.rows}`;
 
-      this.tiles.push(i === bigIndex ? this.bigTile : element);
-
+      unsortedTiles.push(element);
+      //      this.tiles.push(i === bigIndex ? this.bigTile : element);
     }
+
+    this.unsortedTiles = unsortedTiles;
+    // sort in a way that mat-grid-list doesn't show empty spaces;
+    this.tiles = this.sort(unsortedTiles);
+
     this.isLoaded = true;
-    // console.log(JSON.stringify(this.tiles));
   }
 
-  public addCols() {
-    // this.MAX_COLS++;
-    const filterType = this.random(1,6);
-    this.tiles = this.tiles.filter(tile => {
-      return tile.content.title !== `${filterType}`;
-    });
+  private debugMap() {
+    let mapStr = '|';
+    for (let index = 0; index < this.map.length; index++) {
+      let cell = this.map[index];
+      cell = cell.length < 2 ? ' '.repeat(2 - cell.length) + cell : cell;
+      mapStr += ` ${cell}${(index + 1) % this.MAX_COLS === 0 ? ' |\n|' : ' |'}`;
+    }
+    console.log(mapStr);
+
+  }
+
+  private sort(arr: Item[]): Item[] {
+    const result = [];
+    let occupiedCells = new Set<number>();
+
+    let insertCell = 0;
+    // iterate all items
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+
+      // find first free
+      let firstFreeCell = 0;
+      while (occupiedCells.has(firstFreeCell)) {
+        firstFreeCell++;
+      }
+
+      insertCell = firstFreeCell;
+
+      while (
+        !this.fits(item, insertCell, occupiedCells, this.MAX_COLS)
+      ) {
+        insertCell++;
+      }
+      occupiedCells = this.occupyCells(item, insertCell, occupiedCells, this.MAX_COLS);
+    }
+
+    const sortedSet = new Set<Item>();
+    for (const cell of this.map) {
+      const item = this.unsortedTiles[parseInt(cell, 10) - 1];
+      if (item) {
+        sortedSet.add(item);
+      }
+    }
+    return Array.from(sortedSet);
+  }
+
+  private fits(item: Item, startCell: number, occupiedCells: Set<number>, maxCols: number): boolean {
+    // if is on edge
+    const outOfLimits = (startCell % maxCols) + (item.width - 1) > (maxCols - 1);
+
+    // if one of the cells is occupied;
+    let isEmpty = true;
+    if (!outOfLimits) {
+      const itemCells = this.getCells(item, startCell, maxCols);
+      for (const cell of itemCells) {
+        if (occupiedCells.has(cell)) {
+          isEmpty = false;
+          break;
+        }
+      }
+    }
+    return !outOfLimits && isEmpty;
+  }
+
+  private occupyCells(item: Item, startCell: number, occupiedCells: Set<number>, maxCols: number): Set<number> {
+    const itemCells = this.getCells(item, startCell, maxCols, true);
+    for (const cell of itemCells) {
+      occupiedCells.add(cell);
+    }
+    return occupiedCells;
+  }
+
+  private getCells(item: Item, startCell, maxCols: number, o?: boolean): number[] {
+
+    const cells = [];
+    for (let row = 0; row < item.height; row++) {
+      for (let column = 0; column < item.width; column++) {
+        const cell = startCell + column + row * maxCols;
+        cells.push(cell);
+
+        if (o) {
+          this.map[cell] = item.text;
+        }
+      }
+    }
+    return cells;
   }
 
   private random(min: number, max: number) {
