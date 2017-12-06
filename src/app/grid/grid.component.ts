@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
-interface Item {
-  content: any;
-  text: string;
-  width: number;
-  height: number;
-  color: string;
-}
+import { Item } from '../interfaces/item';
+import { MasonrySortService } from '../services/masonry-sort.service';
+import { makeDecorator } from '@angular/core/src/util/decorators';
 
 @Component({
   selector: 'gmf-grid',
@@ -35,20 +30,18 @@ export class GridComponent implements OnInit {
 
   public map: string[];
 
-  private GRID_QTY_ELEMENTS = 32;
+  private GRID_QTY_ELEMENTS = 40;
   private MAX_SIZE_MULTI = 1;
   public MAX_COLS = 8;
 
   public isLoaded = false;
-  constructor() { }
+  constructor(private masonrySortService: MasonrySortService) {
+    masonrySortService.maxColumns = this.MAX_COLS;
+   }
 
   ngOnInit() {
-
-    this.map = new Array(100).fill('');
-
+     // mock/fill the array with random items;
     const unsortedTiles = [];
-
-    // mock/fill the array with random items;
     for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
 
       // const size = this.random(1, this.MAX_SIZE_MULTI);
@@ -68,100 +61,18 @@ export class GridComponent implements OnInit {
 
     this.unsortedTiles = unsortedTiles;
     // sort in a way that mat-grid-list doesn't show empty spaces;
-    this.tiles = this.sort(unsortedTiles);
 
+    const start = performance.now();
+    this.tiles = this.masonrySortService.sort(unsortedTiles);
+    const end = performance.now();
+    console.log((end - start) / 1000);
     this.isLoaded = true;
   }
 
-  private debugMap() {
-    let mapStr = '|';
-    for (let index = 0; index < this.map.length; index++) {
-      let cell = this.map[index];
-      cell = cell.length < 2 ? ' '.repeat(2 - cell.length) + cell : cell;
-      mapStr += ` ${cell}${(index + 1) % this.MAX_COLS === 0 ? ' |\n|' : ' |'}`;
-    }
-    console.log(mapStr);
-
-  }
-
-  private sort(arr: Item[]): Item[] {
-    const result = [];
-    let occupiedCells = new Set<number>();
-
-    let insertCell = 0;
-    // iterate all items
-    for (let i = 0; i < arr.length; i++) {
-      const item = arr[i];
-
-      // find first free
-      let firstFreeCell = 0;
-      while (occupiedCells.has(firstFreeCell)) {
-        firstFreeCell++;
-      }
-
-      insertCell = firstFreeCell;
-
-      while (
-        !this.fits(item, insertCell, occupiedCells, this.MAX_COLS)
-      ) {
-        insertCell++;
-      }
-      occupiedCells = this.occupyCells(item, insertCell, occupiedCells, this.MAX_COLS);
-    }
-
-    const sortedSet = new Set<Item>();
-    for (const cell of this.map) {
-      const item = this.unsortedTiles[parseInt(cell, 10) - 1];
-      if (item) {
-        sortedSet.add(item);
-      }
-    }
-    return Array.from(sortedSet);
-  }
-
-  private fits(item: Item, startCell: number, occupiedCells: Set<number>, maxCols: number): boolean {
-    // if is on edge
-    const outOfLimits = (startCell % maxCols) + (item.width - 1) > (maxCols - 1);
-
-    // if one of the cells is occupied;
-    let isEmpty = true;
-    if (!outOfLimits) {
-      const itemCells = this.getCells(item, startCell, maxCols);
-      for (const cell of itemCells) {
-        if (occupiedCells.has(cell)) {
-          isEmpty = false;
-          break;
-        }
-      }
-    }
-    return !outOfLimits && isEmpty;
-  }
-
-  private occupyCells(item: Item, startCell: number, occupiedCells: Set<number>, maxCols: number): Set<number> {
-    const itemCells = this.getCells(item, startCell, maxCols, true);
-    for (const cell of itemCells) {
-      occupiedCells.add(cell);
-    }
-    return occupiedCells;
-  }
-
-  private getCells(item: Item, startCell, maxCols: number, o?: boolean): number[] {
-
-    const cells = [];
-    for (let row = 0; row < item.height; row++) {
-      for (let column = 0; column < item.width; column++) {
-        const cell = startCell + column + row * maxCols;
-        cells.push(cell);
-
-        if (o) {
-          this.map[cell] = item.text;
-        }
-      }
-    }
-    return cells;
-  }
 
   private random(min: number, max: number) {
     return min + Math.round(Math.random() * (max - min));
   }
+
+
 }

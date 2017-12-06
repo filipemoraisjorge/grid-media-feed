@@ -11,6 +11,8 @@ const MAT_MODULES = [ MatGridListModule ];
 // app components
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
+// services
+import { MasonrySortService } from './services/masonry-sort.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,7 @@ import { GridComponent } from './grid/grid.component';
     BrowserAnimationsModule,
     ...MAT_MODULES
   ],
-  providers: [],
+  providers: [MasonrySortService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
