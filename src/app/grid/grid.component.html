@@ -1,3 +1,44 @@
+<h2>sorted3 flex css</h2>
+<div style="width: calc(100px * 8); margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            align-content: flex-start" class="mat-typography">
+  <div *ngFor="let tile of tiles3" style.alight-self="" [style.background]="tile.color" [style.flex-basis]="tile.width*100+'px'"
+    [style.height]="tile.height*100+'px'">
+    <h2>{{tile.text}}</h2>
+  </div>
+</div>
+<hr>
+
+<button (click)="addItem()">Add Item</button>
+<button (click)="sort(unsortedTiles)">Sort</button>
+<hr>
+
+<h2>sorted3 mat-grid-list. iterate cells, finds an item that fits</h2>
+<mat-grid-list *ngIf="isLoaded" class="mat-typography" cols="{{MAX_COLS}}">
+  <mat-grid-tile *ngFor="let tile of tiles3" [colspan]="tile.width" [rowspan]="tile.height" [style.background]="tile.color">
+    <h2>{{tile.text}}</h2>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<hr>
+
+<!--
+<mat-grid-list *ngIf="isLoaded" class="mat-typography" cols="{{MAX_COLS}}">
+  <mat-grid-tile *ngFor="let tile of tiles2" [colspan]="tile.width" [rowspan]="tile.height" [style.background]="tile.color">
+
+    <h2>{{tile.text}}</h2>
+
+  </mat-grid-tile>
+</mat-grid-list>
+
+<hr>
+-->
+
+
+<h2>sorted1 mat-grid-list. iterates items, finds a place to fit.</h2>
+
 <mat-grid-list *ngIf="isLoaded" class="mat-typography" cols="{{MAX_COLS}}">
   <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.width" [rowspan]="tile.height" [style.background]="tile.color">
 
@@ -7,11 +48,11 @@
 </mat-grid-list>
 
 <hr>
-
+<h2>unsorted mat-grid-list</h2>
 <mat-grid-list *ngIf="isLoaded" class="mat-typography" cols="{{MAX_COLS}}">
-    <mat-grid-tile *ngFor="let tile of unsortedTiles" [colspan]="tile.width" [rowspan]="tile.height" [style.background]="tile.color">
+  <mat-grid-tile *ngFor="let tile of unsortedTiles" [colspan]="tile.width" [rowspan]="tile.height" [style.background]="tile.color">
 
-      <h2>{{tile.text}}</h2>
+    <h2>{{tile.text}}</h2>
 
-    </mat-grid-tile>
-  </mat-grid-list>
+  </mat-grid-tile>
+</mat-grid-list>
