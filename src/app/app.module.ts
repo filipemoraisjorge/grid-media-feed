@@ -3,11 +3,17 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Angular Material Components
-import {MatGridListModule} from '@angular/material/grid-list';
-const MAT_MODULES = [ MatGridListModule ];
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatTabsModule } from '@angular/material/tabs';
+
+const MAT_MODULES = [
+  MatGridListModule,
+  MatTabsModule
+];
+
 // app components
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';

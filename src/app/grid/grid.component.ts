@@ -1,20 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Item } from '../interfaces/item';
 import { MasonrySortService } from '../services/masonry-sort.service';
-import { makeDecorator } from '@angular/core/src/util/decorators';
 
 @Component({
   selector: 'gmf-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.css']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, AfterViewInit {
 
   private baseTiles: Item[] = [
-    { content: {}, text: '2x2', width: 2, height: 2, color: 'lightblue' },
-    { content: {}, text: '1x1', width: 1, height: 1, color: 'lightgreen' },
-    { content: {}, text: '2x1', width: 2, height: 1, color: 'lightpink' },
-    { content: {}, text: '1x2', width: 1, height: 2, color: '#DDBDF1' },
+    { content: {}, text: '2x2', width: 2, height: 2, color: 'lightblue', column: null, row: null },
+    { content: {}, text: '1x1', width: 1, height: 1, color: 'lightgreen', column: null, row: null },
+    { content: {}, text: '2x1', width: 2, height: 1, color: 'lightpink', column: null, row: null },
+    { content: {}, text: '1x2', width: 1, height: 2, color: '#DDBDF1', column: null, row: null },
+  ];
+
+  private stickyTiles: Item[] = [
+    { id: 1, content: {}, text: 'sticky 2x2 id:1, 0% r:1', width: 2, height: 2, color: 'yellow', row: 1, stickyPercentage: 0 },
+    { id: 2, content: {}, text: 'sticky 1x1 id:2, 20% r:3', width: 1, height: 1, color: 'yellow', row: 3, stickyPercentage: 20 },
+    { id: 3, content: {}, text: 'sticky 1x1 id:3, 50% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 50 },
+    { id: 4, content: {}, text: 'sticky 1x1 id:4, 100% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 100 },
+    { id: 5, content: {}, text: 'sticky 2x1 id:5, 100% r: 4', width: 2, height: 1, color: 'yellow', row: 3, stickyPercentage: 100 },
+
+
   ];
 
   private baseContent = [
@@ -31,17 +41,65 @@ export class GridComponent implements OnInit {
   public tiles3 = [];
   public unsortedTiles = [];
 
+  public _masonryWidthPixels: number;
+  public masonryUnitPixels = 150;
+  public masonryGridTemplateColumns = `repeat(auto-fill, minmax(${this.masonryUnitPixels}px, 1fr))`;
+  public masonryGutterPixels = 3;
+  public _masonryColumns: number;
+
   public map: string[];
 
-  private GRID_QTY_ELEMENTS = 10000;
+  private GRID_QTY_ELEMENTS = 48;
   public MAX_COLS = 8;
   private newItemCounter = 0;
   public isLoaded = false;
   constructor(private masonrySortService: MasonrySortService) { }
 
+
+  @HostListener('window:resize', ['$event'])
+
+  onResize(event) {
+    this.placeStickies(this.stickyTiles);
+  }
+
+  ngAfterViewInit() {
+    // console.log(100 / this.masonryColumns);
+    // for (let i = 0; i <= 100; i++) {
+    //   console.log(i, this.getStickyColumn(i));
+    // }
+    this.placeStickies(this.stickyTiles);
+
+  }
+
+  public get masonryColumns() {
+    return Math.floor(this.masonryWidthPixels / (this.masonryUnitPixels + this.masonryGutterPixels));
+  }
+
+  public get masonryWidthPixels() {
+    return document.getElementById('masonry').offsetWidth;
+  }
+
+  private placeStickies(stickyTiles: Item[]) {
+    for (const sticky of this.stickyTiles) {
+      const stickyElem = document.getElementById(sticky.id.toString(10)); // ViewChild?
+      const c = this.getStickyColumn(sticky);
+      stickyElem.style.gridColumnStart = c;
+    }
+  }
+
+  private getStickyColumn(sticky: Item): number {
+    let percentage = sticky.stickyPercentage;
+    percentage = Math.max(percentage, 1);
+    percentage = Math.min(percentage, 99);
+    const baseCol = (Math.ceil((percentage) * this.masonryColumns / 100));
+    return Math.min(baseCol, Math.min(baseCol + sticky.width, this.masonryColumns - (sticky.width - 1)));
+  }
+
+
   ngOnInit() {
     // mock/fill the array with random items;
-    let unsortedTiles = [];
+    let unsortedTiles = [...this.stickyTiles];
+
     for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
       //  const contentIndex = this.random(0, this.baseContent.length - 1);
       const element = this.getRandomItem(`${i + 1}`);
@@ -73,7 +131,7 @@ export class GridComponent implements OnInit {
     // this.tiles2 = this.masonrySortService.sort2(unsortedTiles, this.MAX_COLS);
     // console.timeEnd('sort2');
 
-    this.tiles = this.masonrySortService.sort(unsortedTiles, this.MAX_COLS);
+    // this.tiles = this.masonrySortService.sort(unsortedTiles, this.MAX_COLS);
 
     // console.log('unsort', this.unsortedTiles.map(item => item.text));
     // console.log('tiles ', this.tiles.map(item => item.text));
