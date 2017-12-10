@@ -1,12 +1,13 @@
 <button (click)="addItem()">Add Item</button>
+<button (click)="addRandomShape()">Add Random Shape</button>
 
 <mat-tab-group class="demo-tab-group">
   <mat-tab label="Unsorted css grid">
     <div id="masonry" style="  width: 100%; margin: auto;
                   display: grid;
-                  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                   grid-auto-flow: dense;"
-      [style.grid-auto-rows]="masonryUnitPixels+'px'" [style.grid-gap]="masonryGutterPixels+'px'" class="mat-typography">
+      [style.grid-auto-rows]="masonryUnitPixels+'px'" [style.grid-gap]="masonryGutterPixels+'px'" [style.min-width]="((masonryUnitPixels*2)+masonryGutterPixels)+'px'" class="mat-typography">
       <div  *ngFor="let tile of unsortedTiles" [id]=tile.id [style.grid-row-start]="tile.row" [style.grid-column-start]="tile.column" [style.grid-column-end]="'span '+tile.width"
         [style.grid-row-end]="'span '+tile.height" [style.background]="tile.color" [class.sticky]="tile.stickyPercentage !== undefined">
         <h2>{{tile.text}}</h2>

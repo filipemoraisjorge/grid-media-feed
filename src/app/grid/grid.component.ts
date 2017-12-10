@@ -20,7 +20,7 @@ export class GridComponent implements OnInit, AfterViewInit {
   private stickyTiles: Item[] = [
     { id: 1, content: {}, text: 'sticky 2x2 id:1, 0% r:1', width: 2, height: 2, color: 'yellow', row: 1, stickyPercentage: 0 },
     { id: 2, content: {}, text: 'sticky 1x1 id:2, 20% r:3', width: 1, height: 1, color: 'yellow', row: 3, stickyPercentage: 20 },
-    { id: 3, content: {}, text: 'sticky 1x1 id:3, 50% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 50 },
+    { id: 3, content: {}, text: 'sticky 1x1 id:3, 50% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 55 },
     { id: 4, content: {}, text: 'sticky 1x1 id:4, 100% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 100 },
     { id: 5, content: {}, text: 'sticky 2x1 id:5, 100% r: 4', width: 2, height: 1, color: 'yellow', row: 3, stickyPercentage: 100 },
 
@@ -42,7 +42,7 @@ export class GridComponent implements OnInit, AfterViewInit {
   public unsortedTiles = [];
 
   public _masonryWidthPixels: number;
-  public masonryUnitPixels = 150;
+  public masonryUnitPixels = 160;
   public masonryGridTemplateColumns = `repeat(auto-fill, minmax(${this.masonryUnitPixels}px, 1fr))`;
   public masonryGutterPixels = 3;
   public _masonryColumns: number;
@@ -56,20 +56,7 @@ export class GridComponent implements OnInit, AfterViewInit {
   constructor(private masonrySortService: MasonrySortService) { }
 
 
-  @HostListener('window:resize', ['$event'])
 
-  onResize(event) {
-    this.placeStickies(this.stickyTiles);
-  }
-
-  ngAfterViewInit() {
-    // console.log(100 / this.masonryColumns);
-    // for (let i = 0; i <= 100; i++) {
-    //   console.log(i, this.getStickyColumn(i));
-    // }
-    this.placeStickies(this.stickyTiles);
-
-  }
 
   public get masonryColumns() {
     return Math.floor(this.masonryWidthPixels / (this.masonryUnitPixels + this.masonryGutterPixels));
@@ -79,12 +66,71 @@ export class GridComponent implements OnInit, AfterViewInit {
     return document.getElementById('masonry').offsetWidth;
   }
 
-  private placeStickies(stickyTiles: Item[]) {
-    for (const sticky of this.stickyTiles) {
-      const stickyElem = document.getElementById(sticky.id.toString(10)); // ViewChild?
-      const c = this.getStickyColumn(sticky);
-      stickyElem.style.gridColumnStart = c;
+  ngOnInit() {
+    // mock/fill the array with random items;
+    const unsortedTiles = [...this.stickyTiles];
+
+    for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
+      //  const contentIndex = this.random(0, this.baseContent.length - 1);
+      const element = this.getRandomItem(`${i + 1}`);
+      unsortedTiles.push(element);
     }
+    this.unsortedTiles = unsortedTiles;
+    // sort in a way that mat-grid-list doesn't show empty spaces;
+    // this.tiles3 = this.masonrySortService.sort3(unsortedTiles, this.MAX_COLS);
+    this.isLoaded = true;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.placeStickies(this.stickyTiles);
+  }
+
+  ngAfterViewInit() {
+    this.placeStickies(this.stickyTiles);
+  }
+
+
+  private placeStickies(stickyTiles: Item[]) {
+    let prevStickyTile;
+    console.log('i|p|s|c|r|');
+    // filter this.tiles where sticky
+    for (const sticky of this.stickyTiles) {
+      let rowIncrement = 0;
+      const column = this.getStickyColumn(sticky);
+
+      // const stickyElem = document.getElementById(sticky.id.toString(10)); // ViewChild?
+      const stickyTile = this.unsortedTiles.find(stk => stk.id === sticky.id);
+
+      if (prevStickyTile && this.isCollide(prevStickyTile, stickyTile)) {
+        rowIncrement += prevStickyTile.height;
+      }
+      if (prevStickyTile) {
+       // console.log(this.isCollide(prevStickyTile, stickyTile));
+       // console.log(sticky.id, prevStickyTile.column, stickyTile.column, column, rowIncrement);
+      }
+
+      stickyTile.column = column;
+      stickyTile.row += rowIncrement;
+      // stickyElem.style.gridColumnStart = column;
+      // stickyElem.style.gridRowStart = sticky.row + rowIncrement;
+      prevStickyTile = stickyTile;
+    }
+  }
+
+  private isCollide(itemOne: Item, itemTwo: Item): boolean {
+    const OneStartCol = itemOne.column;
+    const TwoStartCol = itemTwo.column;
+    const OneEndCol = itemOne.column + itemOne.width - 1;
+    const TwoEndCol = itemTwo.column + itemTwo.width - 1;
+
+    const OneStartRow = itemOne.row;
+    const TwoStartRow = itemTwo.row;
+    const OneEndRow = itemOne.row + itemOne.height - 1;
+    const TwoEndRow = itemTwo.row + itemTwo.height - 1;
+
+    return Math.max(OneStartCol, TwoStartCol) === Math.min(OneEndCol, TwoEndCol) &&
+      Math.max(OneStartRow, TwoStartRow) === Math.min(OneEndRow, TwoEndRow);
   }
 
   private getStickyColumn(sticky: Item): number {
@@ -95,52 +141,6 @@ export class GridComponent implements OnInit, AfterViewInit {
     return Math.min(baseCol, Math.min(baseCol + sticky.width, this.masonryColumns - (sticky.width - 1)));
   }
 
-
-  ngOnInit() {
-    // mock/fill the array with random items;
-    let unsortedTiles = [...this.stickyTiles];
-
-    for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
-      //  const contentIndex = this.random(0, this.baseContent.length - 1);
-      const element = this.getRandomItem(`${i + 1}`);
-      unsortedTiles.push(element);
-    }
-
-    // unsortedTiles = [
-    //   { ...this.baseTiles[0] },
-    //   { ...this.baseTiles[2] },
-    //   { ...this.baseTiles[2] },
-    //   { ...this.baseTiles[1] },
-    //   { ...this.baseTiles[3] },
-    //   { ...this.baseTiles[0] },
-    //   { ...this.baseTiles[0] },
-    //   { ...this.baseTiles[1] },
-    // ];
-    // unsortedTiles.map((item, i) => {
-    //   item.text = `${i + 1}`;
-    //   return item;
-    // });
-
-    this.unsortedTiles = unsortedTiles;
-    // sort in a way that mat-grid-list doesn't show empty spaces;
-
-    this.tiles3 = this.masonrySortService.sort3(unsortedTiles, this.MAX_COLS);
-
-
-    // console.time('sort2');
-    // this.tiles2 = this.masonrySortService.sort2(unsortedTiles, this.MAX_COLS);
-    // console.timeEnd('sort2');
-
-    // this.tiles = this.masonrySortService.sort(unsortedTiles, this.MAX_COLS);
-
-    // console.log('unsort', this.unsortedTiles.map(item => item.text));
-    // console.log('tiles ', this.tiles.map(item => item.text));
-    // console.log('tiles2', this.tiles2.map(item => item.text));
-
-    this.isLoaded = true;
-  }
-
-
   private random(min: number, max: number) {
     return min + Math.round(Math.random() * (max - min));
   }
@@ -148,20 +148,22 @@ export class GridComponent implements OnInit, AfterViewInit {
   public addItem() {
     const element = this.getRandomItem('n' + (this.newItemCounter++));
     this.unsortedTiles.unshift(element);
-    const unsrt = [...this.unsortedTiles];
-    this.tiles = this.masonrySortService.sort(unsrt, this.MAX_COLS);
-    this.tiles3 = this.masonrySortService.sort3(unsrt, this.MAX_COLS);
+    // const unsrt = [...this.unsortedTiles];
+    // this.tiles = this.masonrySortService.sort(unsrt, this.MAX_COLS);
+    // this.tiles3 = this.masonrySortService.sort3(unsrt, this.MAX_COLS);
   }
 
-  public sort(arr: Item[]) {
-    return this.masonrySortService.sort(arr, this.MAX_COLS);
+  public addRandomShape() {
+    const width = this.random(1, 4);
+    const height = this.random(1, 4);
+    const element = { content: {}, text: `${width}x${height}`, width, height, color: '#CCEEDD' };
+    this.unsortedTiles.unshift(element);
   }
 
-  private getRandomItem(label: string) {
+  private getRandomItem(label: string): Item {
     const index = this.random(0, this.baseTiles.length - 1);
     const item = { ...this.baseTiles[index] };
     item.text = label;
     return item;
   }
-
 }
