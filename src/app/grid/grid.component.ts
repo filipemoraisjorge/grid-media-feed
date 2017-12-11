@@ -93,21 +93,18 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   private placeStickies(stickyTiles: Item[]) {
     let prevStickyTile;
-    console.log('i|p|s|c|r|');
-    // filter this.tiles where sticky
-    for (const sticky of this.stickyTiles) {
+
+    const stickyTilesById = stickyTiles.sort((a, b) => Math.pow(a.row, a.column) - Math.pow(b.row, b.column));
+
+    for (const sticky of stickyTilesById) {
       let rowIncrement = 0;
       const column = this.getStickyColumn(sticky);
 
       // const stickyElem = document.getElementById(sticky.id.toString(10)); // ViewChild?
       const stickyTile = this.unsortedTiles.find(stk => stk.id === sticky.id);
 
-      if (prevStickyTile && this.isCollide(prevStickyTile, stickyTile)) {
+      if (prevStickyTile && this.isColliding(prevStickyTile, stickyTile)) {
         rowIncrement += prevStickyTile.height;
-      }
-      if (prevStickyTile) {
-       // console.log(this.isCollide(prevStickyTile, stickyTile));
-       // console.log(sticky.id, prevStickyTile.column, stickyTile.column, column, rowIncrement);
       }
 
       stickyTile.column = column;
@@ -118,7 +115,7 @@ export class GridComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private isCollide(itemOne: Item, itemTwo: Item): boolean {
+  private isColliding(itemOne: Item, itemTwo: Item): boolean {
     const OneStartCol = itemOne.column;
     const TwoStartCol = itemTwo.column;
     const OneEndCol = itemOne.column + itemOne.width - 1;
