@@ -2,6 +2,9 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Item } from '../interfaces/item';
 import { MasonrySortService } from '../services/masonry-sort.service';
+import { MatDialog } from '@angular/material/dialog';
+
+import { EditDialogComponent } from './edit-dialog/edit-dialog.component';
 
 @Component({
   selector: 'gmf-grid',
@@ -27,15 +30,6 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   ];
 
-  private baseContent = [
-    { title: '1', text: 'The first  item' },
-    { title: '2', text: 'The second  item' },
-    { title: '3', text: 'The third  item' },
-    { title: '4', text: 'The fourth  item' },
-    { title: '5', text: 'The fifth  item' },
-    { title: '6', text: 'The sixth random item' },
-  ];
-
   public tiles = [];
   public tiles2 = [];
   public tiles3 = [];
@@ -49,11 +43,11 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   public map: string[];
 
-  private GRID_QTY_ELEMENTS = 48;
+  private GRID_QTY_ELEMENTS = 100;
   public MAX_COLS = 8;
   private newItemCounter = 0;
   public isLoaded = false;
-  constructor(private masonrySortService: MasonrySortService) { }
+  constructor(private masonrySortService: MasonrySortService, public dialog: MatDialog) { }
 
 
 
@@ -71,7 +65,6 @@ export class GridComponent implements OnInit, AfterViewInit {
     const unsortedTiles = [...this.stickyTiles];
 
     for (let i = 0; i < this.GRID_QTY_ELEMENTS; i++) {
-      //  const contentIndex = this.random(0, this.baseContent.length - 1);
       const element = this.getRandomItem(`${i + 1}`);
       unsortedTiles.push(element);
     }
@@ -88,6 +81,18 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.placeStickies(this.stickyTiles);
+  }
+
+  public edit(item: Item): void {
+    let dialogRef = this.dialog.open(EditDialogComponent, {
+      width: '250px',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      item = result;
+    });
   }
 
 
@@ -143,8 +148,10 @@ export class GridComponent implements OnInit, AfterViewInit {
   }
 
   public addItem() {
+
     const element = this.getRandomItem('n' + (this.newItemCounter++));
     this.unsortedTiles.unshift(element);
+
     // const unsrt = [...this.unsortedTiles];
     // this.tiles = this.masonrySortService.sort(unsrt, this.MAX_COLS);
     // this.tiles3 = this.masonrySortService.sort3(unsrt, this.MAX_COLS);

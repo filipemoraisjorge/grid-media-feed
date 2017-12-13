@@ -1,0 +1,41 @@
+<div>
+  <h1 mat-dialog-title>Item {{data.id}}</h1>
+  <div mat-dialog-content>
+    <mat-form-field>
+      <input matInput tabindex="1" [(ngModel)]="data.text">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput tabindex="1" [(ngModel)]="data.row">
+    </mat-form-field>
+    <input matInput tabindex="1" [(ngModel)]="data.column">
+    <mat-form-field>
+      <input matInput tabindex="1" [(ngModel)]="data.stickyPercentage">
+    </mat-form-field>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+    <div>{{data | json}}</div>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data" tabindex="2">Ok</button>
+    <button mat-button (click)="onCloseClick()" tabindex="-1">Close</button>
+  </div>
+</div>
