@@ -23,9 +23,9 @@ export class GridComponent implements OnInit, AfterViewInit {
   private stickyTiles: Item[] = [
     { id: 1, content: {}, text: 'sticky 2x2 id:1, 0% r:1', width: 2, height: 2, color: 'yellow', row: 1, stickyPercentage: 0 },
     { id: 2, content: {}, text: 'sticky 1x1 id:2, 20% r:3', width: 1, height: 1, color: 'yellow', row: 3, stickyPercentage: 20 },
-    { id: 3, content: {}, text: 'sticky 1x1 id:3, 50% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 55 },
+    { id: 3, content: {}, text: 'sticky 1x1 id:3, 50% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 50 },
     { id: 4, content: {}, text: 'sticky 1x1 id:4, 100% r:1', width: 1, height: 1, color: 'yellow', row: 1, stickyPercentage: 100 },
-    { id: 5, content: {}, text: 'sticky 2x1 id:5, 100% r: 4', width: 2, height: 1, color: 'yellow', row: 3, stickyPercentage: 100 },
+    { id: 5, content: {}, text: 'sticky 2x1 id:5, 100% r: 4', width: 2, height: 1, color: 'yellow', row: 4, stickyPercentage: 100 },
 
 
   ];
@@ -99,9 +99,9 @@ export class GridComponent implements OnInit, AfterViewInit {
   private placeStickies(stickyTiles: Item[]) {
     let prevStickyTile;
 
-    const stickyTilesById = stickyTiles.sort((a, b) => Math.pow(a.row, a.column) - Math.pow(b.row, b.column));
+    const stickyTilesByPosition = stickyTiles.sort((a, b) => Math.pow(a.row, a.column) - Math.pow(b.row, b.column));
 
-    for (const sticky of stickyTilesById) {
+    for (const sticky of stickyTilesByPosition) {
       let rowIncrement = 0;
       const column = this.getStickyColumn(sticky);
 
