@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 
 const MAT_MODULES = [
@@ -20,13 +22,16 @@ const MAT_MODULES = [
   MatGridListModule,
   MatFormFieldModule,
   MatInputModule,
-  MatTabsModule
+  MatTabsModule,
+  MatCheckboxModule,
+  MatIconModule 
 ];
 
 // app components
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
 import { EditDialogComponent } from './grid/edit-dialog/edit-dialog.component';
+import { ItemViewChannelComponent } from './item/item-view--channel.component';
 // services
 import { MasonrySortService } from './services/masonry-sort.service';
 
@@ -35,7 +40,8 @@ import { MasonrySortService } from './services/masonry-sort.service';
   declarations: [
     AppComponent,
     GridComponent,
-    EditDialogComponent
+    EditDialogComponent,
+    ItemViewChannelComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,11 @@
 export interface Item {
-  id?: number;
+  id?: string;
   content: any;
   text: string;
+  body?: string;
+  blurb?: string;
+  imageUrl?: string;
+  videoUrl?: string;
   width: number;
   height: number;
   color: string;
